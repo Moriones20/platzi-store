@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 
 @Controller('products')
 export class ProductsController {
@@ -14,5 +14,13 @@ export class ProductsController {
     @Query('brand') brand: string,
   ) {
     return `products limit => ${limit}, offset => ${offset}, brand => ${brand}`;
+  }
+
+  @Post()
+  create(@Body() payload: any) {
+    return {
+      message: 'create action',
+      data: payload,
+    };
   }
 }
