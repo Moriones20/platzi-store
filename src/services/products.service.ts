@@ -1,23 +1,16 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { products } from 'src/data/products.data';
 import { CreateProductDto, UpdateProductDto } from 'src/dtos/product.dto';
 import { Product } from 'src/entities/product.entity';
 
 @Injectable()
 export class ProductsService {
-  private counterId = 1;
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Product 1',
-      description: 'bal bla',
-      price: 122,
-      image: '',
-      stock: 12,
-    },
-  ];
+  private products: Product[] = products;
+  private counterId: number;
 
   findAll(limit: number, offset: number, brand: string) {
     return {
+      statusCode: HttpStatus.OK,
       limit,
       offset,
       brand,
@@ -28,32 +21,46 @@ export class ProductsService {
   findById(id: number) {
     const product = this.products.find((item) => item.id === id);
     if (!product) {
-      throw new NotFoundException(`Product #${id} not found`);
+      throw new NotFoundException(`Product not found`);
     }
-    return product;
+    return {
+      statusCode: HttpStatus.OK,
+      data: product,
+    };
   }
 
   create(payload: CreateProductDto) {
-    this.counterId = this.counterId + 1;
+    const maxId = Math.max(...products.map((product) => product.id), 0);
+    this.counterId = maxId + 1;
+
     const newProduct = {
       id: this.counterId,
       ...payload,
     };
     this.products.push(newProduct);
-    return newProduct;
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: newProduct,
+    };
   }
 
   update(id: number, payload: UpdateProductDto) {
-    const product = this.findById(id);
-    if (product) {
-      const index = this.products.findIndex((item) => item.id === id);
-      this.products[index] = {
-        ...product,
-        ...payload,
-      };
-      return this.products[index];
+    const index = this.products.findIndex((item) => item.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException(`Product not found`);
     }
-    return null;
+
+    this.products[index] = {
+      ...this.products[index],
+      ...payload,
+    };
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: this.products[index],
+    };
   }
 
   delete(id: number) {
@@ -61,15 +68,15 @@ export class ProductsService {
 
     if (index === -1) {
       throw new NotFoundException(
-        `Product #${id} not found or has already been removed`,
+        `Product not found or has already been removed`,
       );
     }
 
     this.products.splice(index, 1);
 
     return {
-      message: `Product #${id} has been deleted`,
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.NO_CONTENT,
+      message: `Product has been deleted`,
     };
   }
 }

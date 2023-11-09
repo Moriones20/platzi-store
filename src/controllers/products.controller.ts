@@ -19,7 +19,7 @@ export class ProductsController {
   constructor(private productService: ProductsService) {}
 
   @Get()
-  getProducts(
+  findAll(
     @Query('limit') limit = 100,
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
@@ -29,7 +29,7 @@ export class ProductsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getProduct(@Param('id', ParseIntPipe) id: number) {
+  findById(@Param('id', ParseIntPipe) id: number) {
     return this.productService.findById(id);
   }
 
@@ -39,12 +39,15 @@ export class ProductsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() payload: UpdateProductDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateProductDto,
+  ) {
     return this.productService.update(+id, payload);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.productService.delete(+id);
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.delete(id);
   }
 }
