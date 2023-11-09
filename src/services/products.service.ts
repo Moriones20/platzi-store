@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from 'src/entities/product.entity';
 
 @Injectable()
@@ -25,7 +25,11 @@ export class ProductsService {
   }
 
   findById(id: number) {
-    return this.products.find((item) => item.id === id);
+    const product = this.products.find((item) => item.id === id);
+    if (!product) {
+      throw new NotFoundException(`Product #${id} not found`);
+    }
+    return product;
   }
 
   create(payload: any) {
@@ -52,11 +56,19 @@ export class ProductsService {
   }
 
   delete(id: number) {
-    const product = this.findById(id);
-    if (product) {
-      const index = this.products.findIndex((item) => item.id === id);
-      delete this.products[index];
+    const index = this.products.findIndex((item) => item.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException(
+        `Product #${id} not found or has already been removed`,
+      );
     }
-    return null;
+
+    this.products.splice(index, 1);
+
+    return {
+      message: `Product #${id} has been deleted`,
+      statusCode: HttpStatus.OK,
+    };
   }
 }
