@@ -1,4 +1,4 @@
-import { Product } from 'src/entities/product.entity';
+import { Product } from '@/modules/products/entities/product.entity';
 
 export const products: Product[] = [
   {
