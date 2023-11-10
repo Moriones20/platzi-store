@@ -20,8 +20,8 @@ export class ProductsController {
 
   @Get()
   findAll(
-    @Query('limit') limit = 100,
-    @Query('offset') offset = 0,
+    @Query('limit') limit: number,
+    @Query('offset') offset: number,
     @Query('brand') brand: string,
   ) {
     return this.productService.findAll(limit, offset, brand);

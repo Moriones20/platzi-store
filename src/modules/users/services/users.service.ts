@@ -2,11 +2,14 @@ import { users } from '@/data/users/users.data';
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
+import { ProductsService } from '@/modules/products/services/products.service';
 
 @Injectable()
 export class UsersService {
   private users: User[] = users;
   private counterId: number;
+
+  constructor(private productsService: ProductsService) {}
 
   findAll() {
     return {
@@ -73,6 +76,15 @@ export class UsersService {
     return {
       statusCode: HttpStatus.NO_CONTENT,
       message: 'User has been deleted',
+    };
+  }
+
+  getOrderByUser(id: number) {
+    const user = this.findById(id);
+    return {
+      date: new Date(),
+      user,
+      products: this.productsService.findAll(),
     };
   }
 }
