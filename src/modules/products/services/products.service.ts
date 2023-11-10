@@ -8,7 +8,7 @@ export class ProductsService {
   private products: Product[] = products;
   private counterId: number;
 
-  findAll(limit: number, offset: number, brand: string) {
+  findAll(limit = 100, offset = 0, brand = '') {
     return {
       statusCode: HttpStatus.OK,
       limit,
