@@ -6,9 +6,19 @@ import { UsersModule } from '@/modules/users/users.module';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { DatabaseModule } from './modules/database/database.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [HttpModule, ProductsModule, UsersModule, DatabaseModule],
+  imports: [
+    DatabaseModule,
+    HttpModule,
+    ProductsModule,
+    UsersModule,
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
