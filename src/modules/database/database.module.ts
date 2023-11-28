@@ -22,6 +22,7 @@ const API_KEY_PROD = 'PROD';
           database: name,
           entities: [],
           synchronize: true,
+          autoLoadEntities: true,
         };
       },
     }),
